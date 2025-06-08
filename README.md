@@ -11,9 +11,6 @@
 - [Konfigurasi](#-konfigurasi)
 - [Menjalankan Aplikasi](#-menjalankan-aplikasi)
 - [API yang Digunakan](#-api-yang-digunakan)
-- [Struktur Proyek](#-struktur-proyek)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
 
 ## ✨ Fitur Utama
 
