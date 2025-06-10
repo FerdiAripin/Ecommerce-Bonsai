@@ -126,10 +126,12 @@ class ReviewResource extends Resource
                     ->query(fn($query) => $query->whereMonth('created_at', now()->subMonth()->month)
                                                 ->whereYear('created_at', now()->subMonth()->year)),
             ])
-            ->actions([
-                // Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
+
+            // action delete
+            // ->actions([
+            //     // Tables\Actions\EditAction::make(),
+            //     Tables\Actions\DeleteAction::make(),
+            // ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
