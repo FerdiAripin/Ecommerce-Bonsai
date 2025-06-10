@@ -38,10 +38,10 @@ class OrderResource extends Resource
                             ->disabled(),
                         Forms\Components\Select::make('status')
                             ->options([
-                                'in_cart' => 'Dalam Keranjang',
+                                // 'in_cart' => 'Dalam Keranjang',
                                 'pending' => 'Menunggu',
-                                'in_shipping' => 'Dalam Pengiriman',
-                                'delivered' => 'Terkirim',
+                                'in_shipping' => 'Di Proses',
+                                'delivered' => 'Dalam Pengiriman',
                                 'success' => 'Sukses',
                                 'cancelled' => 'Dibatalkan',
                             ])
@@ -54,7 +54,7 @@ class OrderResource extends Resource
                             ->options([
                                 'preparing' => 'Disiapkan',
                                 'shipped' => 'Dikirim',
-                                'in_transit' => 'Dalam Perjalanan',
+                                // 'in_transit' => 'Dalam Perjalanan',
                                 'delivered' => 'Terkirim',
                             ])
                             ->label('Status Pengiriman'),
