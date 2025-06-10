@@ -63,7 +63,8 @@
                         </div>
                         <div class="mb-4">
                             <label for="phone" class="block text-gray-700 text-sm mb-2">No Handphone</label>
-                            <input type="tel" id="phone" name="phone" class="input" required>
+                            <input type="tel" id="phone" name="phone" class="input" required pattern="[0-9]+"
+                                inputmode="numeric" title="Masukkan hanya angka">
                         </div>
                         <div class="mb-4">
                             <label for="message" class="block text-gray-700 text-sm mb-2">Pesan</label>
@@ -75,6 +76,4 @@
             </div>
         </div>
     </div>
-
-
 @endsection

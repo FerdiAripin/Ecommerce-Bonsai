@@ -255,7 +255,7 @@ class OrderController extends Controller
                 // Kirim notifikasi WhatsApp
                 $orderCode = '#ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT);
                 $phoneNumber = env('WA_TARGET'); // Nomor tujuan
-                $message = "Halo admin,\n\nPesanan {$orderCode} telah berhasil dibayar.\n\nTotal Pembayaran: Rp " . number_format($order->grand_total, 0, ',', '.') . "\n\nSegera proses pesanan ini.\n\nTerima kasih.";
+                $message = "Halo admin,\n\nPesanan {$orderCode} telah berhasil dibayar.\n\nTotal Pembayaran: Rp " . number_format($order->grand_total, 0, ',', '.') . "\n\nMohon segera diproses agar pelanggan mendapat pelayanan terbaik.\n\nTerima kasih. 🙏";
 
                 $this->sendWhatsAppNotification($phoneNumber, $message);
             } elseif ($status == 'pending') {
@@ -299,6 +299,7 @@ class OrderController extends Controller
         // Check payment status from Midtrans
         if ($order->payment && $order->payment->transaction_id) {
             try {
+                // /** @var \stdClass $statusResponse */
                 $statusResponse = Transaction::status($order->payment->transaction_id);
                 $order->payment->update([
                     'transaction_status' => $statusResponse->transaction_status
@@ -340,7 +341,7 @@ class OrderController extends Controller
         // Kirim notifikasi WhatsApp
         $orderCode = '#ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT);
         $phoneNumber = env('WA_TARGET'); // Nomor tujuan
-        $message = "Halo admin,\n\nPesanan {$orderCode} telah berhasil dibayar.\n\nTotal Pembayaran: Rp " . number_format($order->grand_total, 0, ',', '.') . "\n\nSegera proses pesanan ini.\n\nTerima kasih.";
+        $message = "Halo admin,\n\nPesanan {$orderCode} telah berhasil dibayar.\n\nTotal Pembayaran: Rp " . number_format($order->grand_total, 0, ',', '.') . "\n\nMohon segera diproses agar pelanggan mendapat pelayanan terbaik.\n\nTerima kasih. 🙏";
         $this->sendWhatsAppNotification($phoneNumber, $message);
 
         // Ensure the order belongs to logged in user

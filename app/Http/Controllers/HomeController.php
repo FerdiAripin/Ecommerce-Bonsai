@@ -52,19 +52,21 @@ class HomeController extends Controller
         $phoneNumber = preg_replace('/[^0-9]/', '', $phoneNumber);
 
         // Prepare WhatsApp message
-        $whatsappMessage = "Pemberitahuan Form Kontak Baru:\n\n";
-        $whatsappMessage .= "Nama    : {$validated['name']}\n";
-        $whatsappMessage .= "Email   : {$validated['email']}\n";
-        $whatsappMessage .= "Telepon : {$validated['phone']}\n\n";
-        $whatsappMessage .= "Pesan:\n{$validated['message']}\n\n";
-        $whatsappMessage .= "Mohon tindak lanjut sesuai kebutuhan.\nTerima kasih.";
+        $whatsappMessage = "📩 *Formulir Kontak Baru Diterima!*\n\n";
+        $whatsappMessage .= "Berikut detail pengirim:\n";
+        $whatsappMessage .= "*Nama*    : {$validated['name']}\n";
+        $whatsappMessage .= "*Email*   : {$validated['email']}\n";
+        $whatsappMessage .= "*Telepon* : {$validated['phone']}\n\n";
+        $whatsappMessage .= "*Pesan*: {$validated['message']}\n\n";
+        $whatsappMessage .= "🙏 Mohon segera ditindaklanjuti sesuai kebutuhan.\nTerima kasih atas perhatiannya! 🌟";
+
 
 
         // Send WhatsApp notification to admin
         $adminPhone = env('WA_TARGET'); // Replace with your admin's phone number
         $this->sendWhatsAppNotification($adminPhone, $whatsappMessage);
 
-        return redirect()->route('contact')->with('success', 'Thank you for your message! We will contact you soon.');
+        return redirect()->route('contact')->with('success', 'Terima kasih atas pesan Anda! Kami akan segera menghubungi Anda.');
     }
 
     private function sendWhatsAppNotification($phoneNumber, $message)

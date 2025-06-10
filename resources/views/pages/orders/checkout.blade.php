@@ -194,10 +194,10 @@
             const shippingCostInput = document.getElementById('shipping_cost');
             const postalCodeInput = document.getElementById('postal_code');
 
-            // Config - sesuaikan dengan pengaturan Anda
+            // Config -
             const config = {
-                originCityId: 469, // ID kota asal pengiriman (contoh: 152 untuk Jakarta Pusat)
-                defaultWeight: 5000 // Berat default dalam gram (1kg) jika tidak ada data cart
+                originCityId: 469, // ID kota asal pengiriman
+                defaultWeight: 1000 // Berat default dalam gram (1kg) 
             };
 
             // Function to load provinces
@@ -290,7 +290,7 @@
                     return;
                 }
 
-                // Hitung berat dari cart atau gunakan default
+                // Hitung berat masih menggunakan default
                 const weight = 5000; // dalam gram
 
                 // Validasi berat minimal 1kg (1000 gram)
