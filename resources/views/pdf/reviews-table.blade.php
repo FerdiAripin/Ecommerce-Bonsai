@@ -287,7 +287,7 @@
                             @for($i = 1; $i <= 5; $i++)
                                 <span class="{{ $i <= $review->rating ? '' : 'empty' }}">★</span>
                             @endfor
-                            ({{ $review->rating }})
+                            {{-- ({{ $review->rating }}) --}}
                         </div>
                     </td>
                     <td>

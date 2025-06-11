@@ -250,18 +250,21 @@
                                     </div>
                                 </div>
 
-                                <form action="{{ route('reviews.store') }}" method="POST">
+                                <form action="{{ route('reviews.store') }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $item->product->id }}">
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
 
                                     <div class="mb-3">
+                                        <label class="block text-gray-700 mb-2 font-medium">Rating</label>
                                         <div class="flex items-center">
                                             @for ($i = 1; $i <= 5; $i++)
-                                                <label class="block text-gray-700 mb-1">
+                                                <label class="cursor-pointer">
                                                     <input type="radio" name="rating" value="{{ $i }}"
-                                                        class="rating-input absolute opacity-0">
-                                                    <span class="rating-star text-3xl text-gray-300">
+                                                        class="rating-input sr-only" required>
+                                                    <span
+                                                        class="rating-star text-3xl text-gray-300 hover:text-yellow-400 transition-colors">
                                                         ★
                                                     </span>
                                                 </label>
@@ -271,12 +274,54 @@
 
                                     <div class="mb-3">
                                         <label for="comment-{{ $item->product->id }}"
-                                            class="block text-gray-700 mb-1">Ulasan (opsional)</label>
+                                            class="block text-gray-700 mb-2 font-medium">Ulasan (opsional)</label>
                                         <textarea name="comment" id="comment-{{ $item->product->id }}" rows="3"
-                                            class="w-full border border-gray-300 rounded p-2"></textarea>
+                                            class="w-full border border-gray-300 rounded p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
                                     </div>
 
-                                    <button type="submit" class="btn-primary">
+                                    <div class="mb-4">
+                                        <label for="image-{{ $item->product->id }}"
+                                            class="block text-gray-700 mb-2 font-medium">Upload Gambar (opsional)</label>
+                                        <div class="relative">
+                                            <input type="file" name="image" id="image-{{ $item->product->id }}"
+                                                class="hidden" accept="image/*"
+                                                onchange="previewImage(this, 'preview-{{ $item->product->id }}')">
+                                            <label for="image-{{ $item->product->id }}"
+                                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 20 16">
+                                                        <path stroke="currentColor" stroke-linecap="round"
+                                                            stroke-linejoin="round" stroke-width="2"
+                                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                                    </svg>
+                                                    <p class="mb-2 text-sm text-gray-500">
+                                                        <span class="font-semibold">Klik untuk upload</span> atau drag and
+                                                        drop
+                                                    </p>
+                                                    <p class="text-xs text-gray-500">PNG, JPG, JPEG (MAX. 2MB)</p>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Preview Image -->
+                                        <div id="preview-{{ $item->product->id }}" class="mt-3 hidden">
+                                            <div class="relative inline-block">
+                                                <img class="h-24 w-24 object-cover rounded-lg border border-gray-300"
+                                                    src="" alt="Preview">
+                                                <button type="button"
+                                                    onclick="removeImage('image-{{ $item->product->id }}', 'preview-{{ $item->product->id }}')"
+                                                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                                                    ×
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
                                         Kirim Ulasan
                                     </button>
                                 </form>
@@ -312,13 +357,142 @@
                                             class="ml-2 text-gray-600 text-sm">{{ $review->created_at->format('d M Y') }}</span>
                                     </div>
                                     @if ($review->comment)
-                                        <p class="text-gray-700">{{ $review->comment }}</p>
+                                        <p class="text-gray-700 mb-3">{{ $review->comment }}</p>
+                                    @endif
+                                    @if ($review->image)
+                                        <div class="mt-3">
+                                            <img src="{{ asset('storage/' . $review->image) }}" alt="Review image"
+                                                class="h-32 w-32 object-cover rounded-lg border border-gray-300 cursor-pointer"
+                                                onclick="openImageModal('{{ asset('storage/' . $review->image) }}')">
+                                        </div>
                                     @endif
                                 </div>
                             </div>
                         @endif
                     @endforeach
                 </div>
+
+                <!-- Modal untuk view gambar -->
+                <div id="imageModal"
+                    class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center"
+                    onclick="closeImageModal()">
+                    <div class="max-w-4xl max-h-full p-4">
+                        <img id="modalImage" src="" alt="Review image"
+                            class="max-w-full max-h-full object-contain rounded-lg">
+                    </div>
+                </div>
+
+                <script>
+                    // Preview image function
+                    function previewImage(input, previewId) {
+                        const file = input.files[0];
+                        const preview = document.getElementById(previewId);
+                        const img = preview.querySelector('img');
+
+                        if (file) {
+                            // Validate file size (2MB)
+                            if (file.size > 2 * 1024 * 1024) {
+                                alert('Ukuran file terlalu besar. Maksimal 2MB.');
+                                input.value = '';
+                                return;
+                            }
+
+                            // Validate file type
+                            if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                                alert('Format file tidak didukung. Gunakan JPG, JPEG, atau PNG.');
+                                input.value = '';
+                                return;
+                            }
+
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                img.src = e.target.result;
+                                preview.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }
+
+                    // Remove image function
+                    function removeImage(inputId, previewId) {
+                        document.getElementById(inputId).value = '';
+                        document.getElementById(previewId).classList.add('hidden');
+                    }
+
+                    // Open image modal
+                    function openImageModal(imageSrc) {
+                        const modal = document.getElementById('imageModal');
+                        const modalImage = document.getElementById('modalImage');
+                        modalImage.src = imageSrc;
+                        modal.classList.remove('hidden');
+                    }
+
+                    // Close image modal
+                    function closeImageModal() {
+                        document.getElementById('imageModal').classList.add('hidden');
+                    }
+
+                    // Rating functionality
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const ratingInputs = document.querySelectorAll('.rating-input');
+
+                        ratingInputs.forEach(input => {
+                            input.addEventListener('change', function() {
+                                const rating = parseInt(this.value);
+                                const stars = this.closest('form').querySelectorAll('.rating-star');
+
+                                stars.forEach((star, index) => {
+                                    if (index < rating) {
+                                        star.classList.remove('text-gray-300');
+                                        star.classList.add('text-yellow-400');
+                                    } else {
+                                        star.classList.remove('text-yellow-400');
+                                        star.classList.add('text-gray-300');
+                                    }
+                                });
+                            });
+                        });
+
+                        // Hover effect for rating
+                        document.querySelectorAll('.rating-star').forEach((star, index) => {
+                            star.addEventListener('mouseenter', function() {
+                                const stars = this.closest('form').querySelectorAll('.rating-star');
+                                stars.forEach((s, i) => {
+                                    if (i <= index) {
+                                        s.classList.add('text-yellow-400');
+                                        s.classList.remove('text-gray-300');
+                                    } else {
+                                        s.classList.add('text-gray-300');
+                                        s.classList.remove('text-yellow-400');
+                                    }
+                                });
+                            });
+
+                            star.closest('form').addEventListener('mouseleave', function() {
+                                const checkedInput = this.querySelector('.rating-input:checked');
+                                const stars = this.querySelectorAll('.rating-star');
+
+                                if (checkedInput) {
+                                    const rating = parseInt(checkedInput.value);
+                                    stars.forEach((s, i) => {
+                                        if (i < rating) {
+                                            s.classList.add('text-yellow-400');
+                                            s.classList.remove('text-gray-300');
+                                        } else {
+                                            s.classList.add('text-gray-300');
+                                            s.classList.remove('text-yellow-400');
+                                        }
+                                    });
+                                } else {
+                                    stars.forEach(s => {
+                                        s.classList.add('text-gray-300');
+                                        s.classList.remove('text-yellow-400');
+                                    });
+                                }
+                            });
+                        });
+                    });
+                </script>
             @endif
         </div>
     </section>

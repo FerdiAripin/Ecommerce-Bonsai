@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -59,6 +60,19 @@ class ReviewResource extends Resource
                         Textarea::make('comment')
                             ->label('Komentar')
                             ->disabled()
+                            ->columnSpanFull(),
+                        FileUpload::make('image')
+                            ->label('Gambar Ulasan')
+                            ->image()
+                            ->directory('reviews')
+                            ->visibility('public')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->columnSpanFull(),
                     ])->columns(2),
             ]);
